@@ -6,6 +6,7 @@ public class BallController : MonoBehaviour
 {
     //Components Connected to the same gameObject as this one.
     Transform myTran;
+    Rigidbody myBod;
 
     //Components Connected to other gameObjects.
     Transform camTran;
@@ -15,11 +16,14 @@ public class BallController : MonoBehaviour
     {
         //init my components
         myTran = GetComponent<Transform>();
+        myBod = GetComponent<Rigidbody>();
 
         //init other components
         camTran = GameObject.Find("Main Camera").GetComponent<Transform>();        
 
         //myTran.position = new Vector3(-2, 5, 0);
+        float f = Random.Range(-1f, 1f);
+        myBod.velocity = new Vector3(f, 5, 0);
     }
 
     // Update is called once per frame
