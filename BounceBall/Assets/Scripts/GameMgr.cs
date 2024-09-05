@@ -4,40 +4,44 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class BallController : MonoBehaviour
+public class GameMgr : MonoBehaviour
 {
     //Components Connected to the same gameObject as this one.
-    Transform myTran;
-    Rigidbody myBod;
-    AudioSource myAudio;
 
     //Components Connected to other gameObjects.
-    Transform camTran;
 
-    //public properties
-    public AudioClip bounceSound; //Initialised in the inspector.
+    //public properties (initialized in the inspector)
 
-    // private property
+    //private properties
+    private bool gameOver;
 
     // Start is called before the first frame update
     void Start()
     {
         //init my components
-        myTran = GetComponent<Transform>();
-        myBod = GetComponent<Rigidbody>();
-        myAudio = GetComponent<AudioSource>();
 
         //init other components
-        camTran = GameObject.Find("Main Camera").GetComponent<Transform>();
 
-        //myTran.position = new Vector3(-2, 5, 0);
-        float f = Random.Range(-1f, 1f);
-        myBod.velocity = new Vector3(f, 5, 0);
+        //init private properties
+        gameOver = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(!gameOver && Input.GetButtonDown("Fire1")) {
+            if(Time.timeScale == 0) {
+                Time.timeScale = 1;    
+            }
+            else {
+                Time.timeScale = 0;
+            }
+        }
+
+        if(Input.GetButtonDown("Jump") && Time.timeScale == 0) {
+            Time.timeScale = 1;
+            SceneManager.LoadScene(0); // (re)load a scene.
+        }
     }
 
     //Called when my gameObject collides with another
@@ -45,9 +49,7 @@ public class BallController : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         GameObject otherGO = collision.gameObject;
-
-        //camTran.position += new Vector3(0, 0, -1);
-        myAudio.PlayOneShot(bounceSound);
+        //Do Stuff
     }
 
     //Called when my gameObject overlaps (triggers) with another
@@ -55,12 +57,9 @@ public class BallController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         GameObject otherGO = other.gameObject;
-
-        if (otherGO.name == "MagicBox")
-        {
-            GameObject g = Instantiate(gameObject);
-            g.GetComponent<Transform>().position = new Vector3(0, 5, 0);
-            
+        if(otherGO.name == "Ball") {
+            Time.timeScale = 0;
+            gameOver = true;
         }
     }
 }
